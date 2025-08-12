@@ -22,7 +22,7 @@ const getMySubmissions = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.get(API_URL + 'mysubmissions', config);
+  const response = await axios.get(API_URL+'/mysubmissions', config);
   return response.data;
 };
 
