@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
-
+import Footer from '../components/Footer';
 // --- IMPORT YOUR LOGOS HERE ---
 // When using Vite, files in the 'public' folder are served from the root.
 import companyLogo from '/assets/incronix.png'; 
@@ -77,12 +77,13 @@ const LoginPage = () => {
                     className="text-center"
                 >
                     {/* Incronix Logo */}
-                    <img src={companyLogo} alt="Incronix Logo" className="h-32 mx-auto mb-8" />
-                    
+                    {/* <img src={companyLogo} alt="Incronix Logo" className="h-32 mx-auto mb-8" />
+                     */}
                     {/* MCQ Master Text */}
                     <h1 className="text-5xl font-bold">MCQ Master</h1>
                     <p className="mt-4 text-lg opacity-90">Your gateway to seamless online examinations.</p>
                 </motion.div>
+                <Footer/>
             </div>
             
             {/* --- WHITE PART (RIGHT SIDE) --- */}
@@ -90,7 +91,9 @@ const LoginPage = () => {
                 <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: 'easeOut' }} className="w-full max-w-sm" >
                     
                     {/* Indira Logo - Increased Size */}
+                    
                     <div className="flex justify-center items-center mb-8">
+                        <img src={companyLogo} alt="Incronix Logo" className="h-20 mx-auto" />
                         <img src={collegeLogo} alt="Indira College Logo" className="h-32" />
                     </div>
                     
@@ -109,6 +112,7 @@ const LoginPage = () => {
                     </form>
                     <p className="mt-8 text-center text-sm text-gray-600"> Don't have an account?{' '} <Link to="/signup" className="font-medium text-gray-700 hover:text-gray-900"> Sign Up </Link> </p>
                 </motion.div>
+                
             </div>
         </div>
     );

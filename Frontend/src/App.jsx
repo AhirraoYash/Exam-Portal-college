@@ -2,7 +2,6 @@
  
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
 // Import your page components
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -19,7 +18,9 @@ import AllStudentsPage from "./pages/Admin/AllStudentsPage";
 import TestDetail from "./pages/Admin/TestDetail";
 import TestResultsPage from "./pages/Admin/TestResultsPage";
 import AddTeacherPage from "./pages/Admin/AddTeacherPage";
+ 
 <Route path="/test/:testId" element={<MCQTestPage />} />
+
 
 
  
@@ -53,7 +54,9 @@ function App() {
         {/* You can add more routes for other pages here later */}
         {/* e.g., <Route path="/dashboard" element={<DashboardPage />} /> */}
       </Routes>
+      
     </Router>
+    
   );
  
 }

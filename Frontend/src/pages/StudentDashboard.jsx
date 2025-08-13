@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import TestCard from '../components/TestCard';
 import testService from '../services/testService';
 import submissionService from '../services/submissionService'; // Import the submission service
-
+import Footer from '../components/Footer';
 const StudentDashboard = () => {
     const [allTests, setAllTests] = useState([]);
     const [submittedTestIds, setSubmittedTestIds] = useState(new Set()); // To store IDs of submitted tests
@@ -81,8 +81,10 @@ const StudentDashboard = () => {
                              </div>
                         )}
                     </div>
+                      <Footer />
                 </main>
             </div>
+           
         </div>
     );
 };

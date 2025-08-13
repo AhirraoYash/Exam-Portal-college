@@ -5,7 +5,7 @@ import AdminSidebar from "../../components/AdminSidebar";
 import AdminHeader from "../../components/AdminHeader";
 import teacherService from "../../services/teacherService"; // For getting students
 import testService from "../../services/testService"; // For getting tests
-
+import Footer from "../../components/Footer";
 const adminName = "Admin";
 
 // --- ICONS ---
@@ -102,6 +102,7 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                     </motion.div>
+                    <Footer/>
                 </main>
             </div>
         </div>

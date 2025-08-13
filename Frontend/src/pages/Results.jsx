@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import submissionService from '../services/submissionService'; // Import the new service
-
+import Footer from '../components/Footer';
 const ResultsPage = () => {
     const [submissions, setSubmissions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -79,6 +79,8 @@ const ResultsPage = () => {
                             </table>
                         </div>
                     </motion.div>
+                    <Footer/>
+                         
                 </main>
             </div>
         </div>
