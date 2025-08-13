@@ -92,7 +92,7 @@ const LoginPage = () => {
                     
                     {/* Indira Logo - Increased Size */}
                     
-                    <div className="flex justify-center items-center mb-8">
+                    <div className="flex justify-center items-center mb-8 mr-10">
                         <img src={companyLogo} alt="Incronix Logo" className="h-20 mx-auto" />
                         <img src={collegeLogo} alt="Indira College Logo" className="h-32" />
                     </div>
