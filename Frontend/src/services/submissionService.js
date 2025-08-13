@@ -1,7 +1,8 @@
 // In frontend/src/services/submissionService.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/submissions/';
+const API_URL = "https://exam-portal-6o7g.onrender.com/api/submissions/";
+
 
 // Save a new test submission
 const submitTest = async (submissionData, token) => {
@@ -21,7 +22,7 @@ const getMySubmissions = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.get(API_URL + 'mysubmissions', config);
+  const response = await axios.get(API_URL+'mysubmissions', config);
   return response.data;
 };
 
