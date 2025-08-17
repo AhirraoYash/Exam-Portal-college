@@ -1,5 +1,3 @@
-// File: Frondend/pages/StudentDashboard.jsx
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
@@ -30,8 +28,14 @@ const StudentDashboard = () => {
                     submissionService.getMySubmissions(user.token)
                 ]);
 
-                // Create a Set of submitted test IDs for easy lookup
-                const submittedIds = new Set(submissionsResponse.map(sub => sub.testId._id));
+                // --- THE ONLY CHANGE IS HERE ---
+                // This now filters out any submissions that might have a missing testId,
+                // which prevents the application from crashing.
+                const submittedIds = new Set(
+                    submissionsResponse
+                        .filter(sub => sub.testId) // This line is the only addition.
+                        .map(sub => sub.testId._id)
+                );
                 
                 setAllTests(testsResponse);
                 setSubmittedTestIds(submittedIds);

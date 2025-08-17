@@ -51,25 +51,27 @@ const ResultsPage = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                     {submissions.length > 0 ? (
-                                        submissions.map((sub) => {
-                                            const totalQuestions = sub.testId.totalMarks / 1; // Assuming 2 marks per question
-                                            const percentage = Math.round((sub.score / totalQuestions) * 100);
-                                            let scoreColor = 'text-green-600';
-                                            if (percentage < 50) scoreColor = 'text-red-600';
-                                            else if (percentage < 75) scoreColor = 'text-orange-500';
+                                        submissions
+                                            .filter(sub => sub.testId) // --- THE ONLY CHANGE IS HERE --- This line prevents the crash.
+                                            .map((sub) => {
+                                                const totalQuestions = sub.testId.totalMarks / 1; // Assuming 2 marks per question
+                                                const percentage = Math.round((sub.score / totalQuestions) * 100);
+                                                let scoreColor = 'text-green-600';
+                                                if (percentage < 50) scoreColor = 'text-red-600';
+                                                else if (percentage < 75) scoreColor = 'text-orange-500';
 
-                                            return (
-                                                <tr key={sub._id} className="hover:bg-gray-50 transition-colors">
-                                                    <td className="px-6 py-4"><span className="font-bold text-gray-900">{sub.testId.name}</span></td>
-                                                    <td className="px-6 py-4"><span className="text-gray-700">{new Date(sub.submittedAt).toLocaleDateString()}</span></td>
-                                                    <td className="px-6 py-4">
-                                                        <span className={`font-extrabold ${scoreColor}`}>
-                                                            {sub.score} / {totalQuestions} ({percentage}%)
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })
+                                                return (
+                                                    <tr key={sub._id} className="hover:bg-gray-50 transition-colors">
+                                                        <td className="px-6 py-4"><span className="font-bold text-gray-900">{sub.testId.name}</span></td>
+                                                        <td className="px-6 py-4"><span className="text-gray-700">{new Date(sub.submittedAt).toLocaleDateString()}</span></td>
+                                                        <td className="px-6 py-4">
+                                                            <span className={`font-extrabold ${scoreColor}`}>
+                                                                {sub.score} / {totalQuestions} ({percentage}%)
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })
                                     ) : (
                                         <tr>
                                             <td colSpan="3" className="text-center py-8 text-gray-500">You have not completed any tests yet.</td>
@@ -80,7 +82,7 @@ const ResultsPage = () => {
                         </div>
                     </motion.div>
                     <Footer/>
-                         
+                        
                 </main>
             </div>
         </div>

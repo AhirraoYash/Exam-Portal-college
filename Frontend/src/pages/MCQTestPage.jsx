@@ -1,5 +1,3 @@
-// File: Frondend/pages/MCQTestPage.jsx
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -9,8 +7,8 @@ import submissionService from '../services/submissionService';
 // --- ICONS ---
 const ClockIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
 const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
-const CheckIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>;
-const XIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>;
+// --- NEW: Icon for the warning modal ---
+const ExclamationIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
 
 
 const MCQTestPage = () => {
@@ -25,11 +23,102 @@ const MCQTestPage = () => {
     const [answers, setAnswers] = useState({});
     const [timeLeft, setTimeLeft] = useState(0);
     const [showSubmitModal, setShowSubmitModal] = useState(false);
-    
-    // This state will hold the final result received from the backend
     const [finalResult, setFinalResult] = useState(null);
 
-    // --- Fetch Test Data ---
+    // --- NEW: State for Security Features ---
+    const [fullscreenWarnings, setFullscreenWarnings] = useState(0);
+    const [visibilityWarnings, setVisibilityWarnings] = useState(0);
+    const [showWarningModal, setShowWarningModal] = useState(null); // Can be 'fullscreen' or 'visibility'
+
+    // --- Test Submission Logic ---
+    const handleSubmitTest = useCallback(async () => {
+        if (finalResult) return; 
+
+        setIsLoading(true);
+        setShowSubmitModal(false);
+        try {
+            const formattedAnswers = Object.entries(answers).map(([questionId, selectedOption]) => ({
+                questionId,
+                selectedOption,
+            }));
+            const submissionData = { testId, answers: formattedAnswers };
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            const resultData = await submissionService.submitTest(submissionData, user.token);
+            setFinalResult(resultData); 
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to submit the test.');
+        } finally {
+            setIsLoading(false);
+        }
+    }, [answers, testId, finalResult]);
+
+    // --- NEW: Fullscreen and Security Logic ---
+    const enterFullscreen = useCallback(() => {
+        const element = document.documentElement;
+        if (element.requestFullscreen) {
+            element.requestFullscreen().catch(err => {
+                // FIXED: Added backticks for template literal
+                console.error(`Fullscreen request failed: ${err.message}`);
+                alert("Please enable fullscreen mode to start the test.");
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        if (finalResult) return;
+
+        const handleFullscreenChange = () => {
+            if (!document.fullscreenElement) {
+                setFullscreenWarnings(prev => {
+                    const newCount = prev + 1;
+                    if (newCount >= 3) {
+                        alert("You have exited fullscreen mode 3 times. The test will now be submitted automatically.");
+                        handleSubmitTest();
+                    } else {
+                        setShowWarningModal('fullscreen');
+                    }
+                    return newCount;
+                });
+            }
+        };
+        
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                setVisibilityWarnings(prev => {
+                    const newCount = prev + 1;
+                    if (newCount >= 3) {
+                        alert("You have switched tabs 3 times. The test will now be submitted automatically.");
+                        handleSubmitTest();
+                    } else {
+                        setShowWarningModal('visibility');
+                    }
+                    return newCount;
+                });
+            }
+        };
+
+        const preventAction = (e) => {
+            e.preventDefault();
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        document.addEventListener('contextmenu', preventAction);
+        document.addEventListener('copy', preventAction);
+        document.addEventListener('paste', preventAction);
+
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            document.removeEventListener('contextmenu', preventAction);
+            document.removeEventListener('copy', preventAction);
+            document.removeEventListener('paste', preventAction);
+        };
+    }, [finalResult, handleSubmitTest]);
+
+
+    // --- Fetch Test Data & Initial Fullscreen Request ---
     useEffect(() => {
         const fetchTest = async () => {
             try {
@@ -38,7 +127,8 @@ const MCQTestPage = () => {
                 
                 const data = await testService.getTestById(testId, user.token);
                 setTestData(data);
-
+                enterFullscreen();
+                
                 const [endHour, endMinute] = data.endTime.split(':').map(Number);
                 const testDate = new Date(data.date);
                 const endTime = new Date(testDate.getUTCFullYear(), testDate.getUTCMonth(), testDate.getUTCDate(), endHour, endMinute);
@@ -53,38 +143,14 @@ const MCQTestPage = () => {
             }
         };
         fetchTest();
-    }, [testId]);
-
-    // --- Test Submission Logic (Corrected) ---
-    const handleSubmitTest = useCallback(async () => {
-        if (finalResult) return; // Prevent re-submission
-
-        setIsLoading(true);
-        setShowSubmitModal(false);
-        try {
-            const formattedAnswers = Object.entries(answers).map(([questionId, selectedOption]) => ({
-                questionId,
-                selectedOption,
-            }));
-            const submissionData = { testId, answers: formattedAnswers };
-            const user = JSON.parse(localStorage.getItem('user'));
-            
-            // The API call now returns the full result from the backend
-            const resultData = await submissionService.submitTest(submissionData, user.token);
-            setFinalResult(resultData); // Store the entire result object
-        } catch (err) {
-            setError(err.response?.data?.message || 'Failed to submit the test.');
-        } finally {
-            setIsLoading(false);
-        }
-    }, [answers, testId, finalResult]);
+    }, [testId, enterFullscreen]);
 
     // --- Countdown Timer Logic ---
     useEffect(() => {
         if (finalResult || !testData || timeLeft <= 0) {
             if (testData && !finalResult) {
                 alert("Time is up! Your test has been submitted automatically.");
-                handleSubmitTest(); // Auto-submit when time runs out
+                handleSubmitTest();
             }
             return;
         }
@@ -95,6 +161,7 @@ const MCQTestPage = () => {
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const secs = seconds % 60;
+        // FIXED: Added backticks for template literal
         return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
@@ -117,15 +184,14 @@ const MCQTestPage = () => {
     if (isLoading) return <div className="p-8 text-center">Loading test...</div>;
     if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
 
-    // --- Results View (Corrected to use backend data) ---
+    // --- Results View ---
     if (finalResult) {
-        // The score and total questions are taken directly from the backend response
         const { score, totalQuestions } = finalResult;
         const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
 
         return (
-            <div className="min-h-screen bg-gray-50 p-8 font-sans">
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-4xl">
+            <div className="min-h-screen bg-gray-50 p-8 font-sans flex items-center justify-center">
+                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-2xl w-full">
                     <div className="rounded-2xl bg-white p-8 text-center shadow-2xl">
                         <h1 className="text-4xl font-extrabold text-gray-800">Test Completed!</h1>
                         <p className="mt-2 text-lg text-gray-600">Here's your performance for the {testData.name} test.</p>
@@ -160,11 +226,13 @@ const MCQTestPage = () => {
                 <motion.div key={currentQuestion._id} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-10">
                     <h2 className="text-xl font-semibold text-gray-700">Question {currentQuestionIndex + 1} of {testData.questions.length}</h2>
                     <div className="w-full bg-gray-200 rounded-full h-2.5 my-6">
+                        {/* FIXED: Added backticks for template literal */}
                         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full" style={{ width: `${progressPercentage}%` }}></div>
                     </div>
                     <p className="text-3xl font-medium text-gray-900 mb-8 min-h-[6rem]">{currentQuestion.questionText}</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {currentQuestion.options.map((option, index) => (
+                            // FIXED: Added backticks for template literal
                             <motion.button key={index} onClick={() => handleSelectOption(currentQuestion._id, option)} className={`p-5 rounded-lg border-2 text-left text-lg transition-all duration-200 ${answers[currentQuestion._id] === option ? 'bg-blue-600 border-blue-600 text-white shadow-lg scale-105' : 'bg-white border-gray-300 hover:bg-blue-50 hover:border-blue-400'}`} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                 <span className="font-semibold">{String.fromCharCode(65 + index)}.</span> {option}
                             </motion.button>
@@ -192,6 +260,28 @@ const MCQTestPage = () => {
                                 <button onClick={() => setShowSubmitModal(false)} className="px-8 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Cancel</button>
                                 <button onClick={handleSubmitTest} className="px-8 py-2 font-bold text-white bg-green-600 rounded-lg hover:bg-green-700">Confirm & Submit</button>
                             </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+                {/* --- NEW: Fullscreen Warning Modal --- */}
+                {showWarningModal === 'fullscreen' && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                        <motion.div initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.7, opacity: 0 }} className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md text-center">
+                            <div className="mx-auto h-20 w-20 flex items-center justify-center rounded-full mb-4 bg-yellow-100"><ExclamationIcon /></div>
+                            <h3 className="text-2xl font-bold text-gray-800">Warning!</h3>
+                            <p className="text-gray-600 mt-2 mb-6">You have left fullscreen mode. Please re-enter to continue. You have {3 - fullscreenWarnings} warning(s) left.</p>
+                            <button onClick={() => { setShowWarningModal(null); enterFullscreen(); }} className="w-full px-8 py-3 font-bold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600">Re-enter Fullscreen</button>
+                        </motion.div>
+                    </motion.div>
+                )}
+                 {/* --- NEW: Tab/Window Switch Warning Modal --- */}
+                {showWarningModal === 'visibility' && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                        <motion.div initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.7, opacity: 0 }} className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md text-center">
+                            <div className="mx-auto h-20 w-20 flex items-center justify-center rounded-full mb-4 bg-yellow-100"><ExclamationIcon /></div>
+                            <h3 className="text-2xl font-bold text-gray-800">Warning!</h3>
+                            <p className="text-gray-600 mt-2 mb-6">You have switched tabs. Please return to the test. You have {3 - visibilityWarnings} warning(s) left.</p>
+                             <button onClick={() => { setShowWarningModal(null); }} className="w-full px-8 py-3 font-bold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600">I'm Back</button>
                         </motion.div>
                     </motion.div>
                 )}
