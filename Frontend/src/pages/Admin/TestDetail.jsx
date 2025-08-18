@@ -171,7 +171,7 @@ const TestDetail = () => {
                                     <div className="space-y-6">
                                         {test.questions.map((q, idx) => (
                                             <div key={q._id || idx} className="bg-gray-50 p-5 rounded-xl border">
-                                                <p className="font-semibold text-lg text-gray-800">Q{idx + 1}: {q.question}</p>
+                                                <p className="font-semibold text-lg text-gray-800">Q{idx + 1}: {q.questionText}</p>
                                                 <ul className="mt-4 space-y-2">
                                                     {q.options.map((opt, i) => (
                                                         <li key={i} className={`flex items-center p-2 rounded-md text-gray-700 ${opt === q.correctAnswer ? 'bg-green-100 text-green-800 font-medium' : ''}`}>
