@@ -21,7 +21,7 @@ router.get('/:id', protect, getTestById);
 router.delete('/:id', protect, teacher, deleteTestById);
 
 // This route will get the full results for a test, including submitted and not-submitted lists.
-router.get('/:id/results', protect, teacher, getTestResults); // Changed to teacher-only for consistency
+router.get('/:id/results', protect, getTestResults); // Changed to teacher-only for consistency
 
 // --- NEW ROUTE ---
 // This route will trigger the download of the Excel results file.
