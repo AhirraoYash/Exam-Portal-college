@@ -3,6 +3,7 @@
 const Test = require('../models/Test.js');
 const Submission = require('../models/Submission.js');
 const User = require('../models/User.js');
+const exceljs = require('exceljs');
 
 // @desc    Create a new test
 // @route   POST /api/tests
@@ -80,6 +81,59 @@ const deleteTestById = async (req, res) => {
   }
 };
 
+// @desc    Download results for a test as an Excel file
+// @route   GET /api/tests/:id/results/download
+// @access  Private/Teacher
+
+const downloadTestResults = async (req, res) => {
+    try {
+        const testId = req.params.id;
+        const test = await Test.findById(testId);
+        if (!test) {
+            return res.status(404).json({ message: 'Test not found' });
+        }
+
+        const submissions = await Submission.find({ testId }).populate('studentId', 'name prn');
+
+        const workbook = new exceljs.Workbook();
+        const worksheet = workbook.addWorksheet(`${test.name} Results`);
+
+        // Define the simplified columns for the Excel file
+        worksheet.columns = [
+            { header: 'PRN', key: 'prn', width: 25 },
+            { header: 'Student Name', key: 'name', width: 35 },
+            { header: 'Marks Obtained', key: 'score', width: 20 },
+        ];
+
+        // Add the simplified data for each student who submitted
+        submissions.forEach(sub => {
+            if (sub.studentId) { // Ensure student data exists
+                worksheet.addRow({
+                    prn: sub.studentId.prn,
+                    name: sub.studentId.name,
+                    score: sub.score,
+                });
+            }
+        });
+
+        // Set headers to trigger a download in the browser
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename="${test.name}_results.xlsx"`
+        );
+
+        await workbook.xlsx.write(res);
+        res.end();
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error: Could not generate Excel file.' });
+    }
+};
 
 // @desc    Get the results for a specific test
 // @route   GET /api/tests/:id/results
@@ -118,4 +172,4 @@ const getTestResults = async (req, res) => {
   }
 };
 
-module.exports = { createTest, getTests,getTestById,getTestResults,deleteTestById };
+module.exports = { createTest, getTests,getTestById,getTestResults,deleteTestById,downloadTestResults };

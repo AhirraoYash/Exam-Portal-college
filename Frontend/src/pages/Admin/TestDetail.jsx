@@ -1,9 +1,7 @@
-// File: Frondend/pages/Admin/TestDetail.jsx
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CalendarDays, Clock, ListChecks, ArrowLeft, Trash, Edit, Users } from 'lucide-react';
+import { CalendarDays, Clock, ListChecks, ArrowLeft, Trash, Edit, Users, Download } from 'lucide-react'; // Added Download icon
 import AdminSidebar from '../../components/AdminSidebar';
 import AdminHeader from '../../components/AdminHeader';
 import testService from '../../services/testService';
@@ -16,6 +14,7 @@ const TestDetail = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [user, setUser] = useState(null); // State to hold user info
+    const [isDownloading, setIsDownloading] = useState(false); // State for download button
 
     useEffect(() => {
         // Get user info from localStorage when the component mounts
@@ -52,6 +51,34 @@ const TestDetail = () => {
             } catch (err) {
                 setError(err.response?.data?.message || 'Failed to delete the test.');
             }
+        }
+    };
+
+    // --- NEW FUNCTION TO HANDLE THE DOWNLOAD ---
+    const handleDownloadResults = async () => {
+        setIsDownloading(true);
+        try {
+            if (!user || !user.token) throw new Error("Authentication error");
+            
+            // This calls the new function in your testService
+            const blob = await testService.downloadResults(testId, user.token);
+            
+            // Create a temporary link to trigger the browser's download prompt
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `${test.name}_results.xlsx`; // Set the filename
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+        } catch (err) {
+            console.error("Download failed:", err);
+            alert("Failed to download results. Please try again.");
+        } finally {
+            setIsDownloading(false);
         }
     };
 
@@ -113,17 +140,26 @@ const TestDetail = () => {
                                         </div>
                                     </div>
                                     <div className="mt-8 border-t pt-6 space-y-3">
-                                    <button onClick={() => navigate(`/admin/test-results/${testId}`)} className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition font-semibold">
+                                        <button onClick={() => navigate(`/admin/test-results/${testId}`)} className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition font-semibold">
                                             <Users className="w-5 h-5" /> View Student Results
                                         </button>
+
+                                        {/* --- NEW DOWNLOAD BUTTON --- */}
+                                        <button 
+                                            onClick={handleDownloadResults}
+                                            disabled={isDownloading}
+                                            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg shadow-sm hover:bg-green-700 transition font-semibold disabled:bg-green-400 disabled:cursor-not-allowed"
+                                        >
+                                            <Download className="w-5 h-5" />
+                                            {isDownloading ? 'Downloading...' : 'Download Results'}
+                                        </button>
+                                        
                                         <button className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition font-semibold">
                                             <Edit className="w-5 h-5" /> Edit Test
                                         </button>
                                         <button onClick={handleDeleteTest} className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg shadow-sm hover:bg-red-700 transition font-semibold">
                                             <Trash className="w-5 h-5" /> Delete Test
                                         </button>
-                                        {/*get total students per test*/}
-                                         
                                     </div>
                                 </div>
                             </div>

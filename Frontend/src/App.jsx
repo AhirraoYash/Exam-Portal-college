@@ -18,6 +18,7 @@ import AllStudentsPage from "./pages/Admin/AllStudentsPage";
 import TestDetail from "./pages/Admin/TestDetail";
 import TestResultsPage from "./pages/Admin/TestResultsPage";
 import AddTeacherPage from "./pages/Admin/AddTeacherPage";
+// import Results2 from "./pages/Results2";
  
 <Route path="/test/:testId" element={<MCQTestPage />} />
 
@@ -51,6 +52,7 @@ function App() {
         <Route path="/admin/tests/:testId" element={<TestDetail />} />
         <Route path="/admin/test-results/:testId" element={<TestResultsPage />} />
         <Route path="/admin/add-teacher" element={<AddTeacherPage />} />
+        {/* <Route path="/submit" element={<Results2/>}/> */}
         {/* You can add more routes for other pages here later */}
         {/* e.g., <Route path="/dashboard" element={<DashboardPage />} /> */}
       </Routes>

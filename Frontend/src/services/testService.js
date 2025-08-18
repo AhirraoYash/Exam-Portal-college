@@ -1,4 +1,3 @@
-// In frontend/src/services/testService.js
 import axios from 'axios';
 
 const API_URL = "https://exam-portal-6o7g.onrender.com/api/tests/";
@@ -64,13 +63,27 @@ const getTestResults = async (testId, token) => {
   return response.data;
 };
 
+// --- NEW FUNCTION TO DOWNLOAD RESULTS ---
+const downloadResults = async (testId, token) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      responseType: 'blob', // This is crucial for handling file downloads
+    };
+    // This calls the new backend route: GET /api/tests/:id/results/download
+    const response = await axios.get(API_URL + testId + '/results/download', config);
+    return response.data; // The response data will be the Excel file itself
+  };
+
 
 const testService = {
   createTest,
   getTests,
   getTestById,
   deleteTestById,
-  getTestResults // Export the new function
+  getTestResults,
+  downloadResults // Export the new function
 };
 
 export default testService;
