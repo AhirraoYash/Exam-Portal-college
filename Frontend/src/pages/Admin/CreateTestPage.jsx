@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import * as XLSX from 'xlsx'; // Import the Excel library
+import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 import { Upload, FileSpreadsheet, Calendar, Clock, CheckCircle, Save, X, AlertCircle } from 'lucide-react';
 import AdminSidebar from '../../components/AdminSidebar';
 import AdminHeader from '../../components/AdminHeader';
 import testService from '../../services/testService';
+import { useSidebar } from '../../context/SidebarContext';
 
 const CreateTestPage = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -111,10 +112,11 @@ const CreateTestPage = () => {
         reader.readAsBinaryString(questionFile);
     };
 
+    const { isOpen } = useSidebar();
     return (
         <div className="bg-gray-50 font-sans flex min-h-screen">
             <AdminSidebar />
-            <div className="flex-1 ml-64 flex flex-col">
+            <div className={`flex-1 flex flex-col transition-all duration-300 ${isOpen ? "ml-64" : "ml-16"}`}>
                 <AdminHeader userName={user?.name || "Admin"} />
                 <main className="flex-1 mt-20 p-8 overflow-y-auto">
                     <motion.div

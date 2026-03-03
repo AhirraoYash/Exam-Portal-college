@@ -5,6 +5,7 @@ import { ArrowLeft, CheckCircle, XCircle, User, Search, Award, BarChart2, Trendi
 import AdminSidebar from '../../components/AdminSidebar';
 import AdminHeader from '../../components/AdminHeader';
 import testService from '../../services/testService';
+import { useSidebar } from '../../context/SidebarContext';
 
 const TestResultsPage = () => {
     const { testId } = useParams();
@@ -73,10 +74,11 @@ const TestResultsPage = () => {
     if (isLoading) { return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-500">Loading results...</div>; }
     if (error) { return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-red-500">Error: {error}</div>; }
 
+    const { isOpen } = useSidebar();
     return (
         <div className="bg-gray-50 font-sans flex min-h-screen">
             <AdminSidebar />
-            <div className="flex-1 ml-64 flex flex-col">
+            <div className={`flex-1 flex flex-col transition-all duration-300 ${isOpen ? "ml-64" : "ml-16"}`}>
                 <AdminHeader userName={user?.name || 'Admin'} />
 
                 <main className="flex-1 mt-20 p-8 overflow-y-auto">

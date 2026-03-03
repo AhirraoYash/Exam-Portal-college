@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const userRoutes = require('./routes/userRoutes');
 const testRoutes = require('./routes/testRoutes');
 const submissionRoutes = require('./routes/submissionRoutes');
@@ -13,8 +12,14 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
-// 2. Allow the app to parse JSON data.
+// CORS: allow only the deployed frontend (set FRONTEND_URL on Render).
+// Falls back to localhost for local development.
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 // API routes
@@ -22,20 +27,13 @@ app.use('/api/users', userRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/submissions', submissionRoutes);
 
-// Serve frontend in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
-
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, '../frontend', 'build', 'index.html'))
-  );
-} else {
-  app.get('/', (req, res) => {
-    res.send('API is running...');
-  });
-}
+// Health check
+app.get('/', (req, res) => {
+  res.send('API is running... 🔥');
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () =>
   console.log(`Server running on port ${PORT} 🔥`)
 );
+

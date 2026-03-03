@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CalendarDays, Clock, ListChecks, ArrowLeft, Trash, Edit, Users, Download } from 'lucide-react'; // Added Download icon
+import { CalendarDays, Clock, ListChecks, ArrowLeft, Trash, Edit, Users, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AdminSidebar from '../../components/AdminSidebar';
 import AdminHeader from '../../components/AdminHeader';
 import testService from '../../services/testService';
+import { useSidebar } from '../../context/SidebarContext';
 
 const TestDetail = () => {
     const { testId } = useParams();
@@ -93,10 +94,11 @@ const TestDetail = () => {
 
     if (!test) return null;
 
+    const { isOpen } = useSidebar();
     return (
         <div className="bg-gray-50 font-sans flex min-h-screen">
             <AdminSidebar />
-            <div className="flex-1 ml-64 flex flex-col">
+            <div className={`flex-1 flex flex-col transition-all duration-300 ${isOpen ? "ml-64" : "ml-16"}`}>
                 <AdminHeader userName={user?.name || 'Admin'} />
 
                 <main className="flex-1 mt-20 p-8 overflow-y-auto">
@@ -235,8 +237,8 @@ const TestDetail = () => {
                                                                 <div
                                                                     key={i}
                                                                     className={`relative px-4 py-3 rounded-lg border-2 transition-all ${opt === q.correctAnswer
-                                                                            ? 'bg-green-50 border-green-500 text-green-900 shadow-sm'
-                                                                            : 'bg-white border-gray-100 text-gray-600'
+                                                                        ? 'bg-green-50 border-green-500 text-green-900 shadow-sm'
+                                                                        : 'bg-white border-gray-100 text-gray-600'
                                                                         }`}
                                                                 >
                                                                     <div className="flex items-center">

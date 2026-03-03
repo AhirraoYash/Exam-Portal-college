@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import AdminSidebar from '../../components/AdminSidebar';
 import AdminHeader from '../../components/AdminHeader';
 import teacherService from '../../services/teacherService';
+import { useSidebar } from '../../context/SidebarContext';
 
 const AddTeacherPage = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -45,10 +46,11 @@ const AddTeacherPage = () => {
         }
     };
 
+    const { isOpen } = useSidebar();
     return (
         <div className="bg-gray-50 font-sans flex min-h-screen">
             <AdminSidebar />
-            <div className="flex-1 ml-64 flex flex-col">
+            <div className={`flex-1 flex flex-col transition-all duration-300 ${isOpen ? "ml-64" : "ml-16"}`}>
                 <AdminHeader userName={user?.name || "Admin"} />
 
                 <main className="flex-1 mt-20 p-8 overflow-y-auto">

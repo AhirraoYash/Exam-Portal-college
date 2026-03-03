@@ -5,6 +5,7 @@ import { Plus, Search, Filter, Calendar, Clock, ChevronRight, FileText } from 'l
 import AdminSidebar from '../../components/AdminSidebar';
 import AdminHeader from '../../components/AdminHeader';
 import testService from '../../services/testService';
+import { useSidebar } from '../../context/SidebarContext';
 
 // Helper function to determine test status
 const getTestStatus = (test) => {
@@ -80,10 +81,11 @@ const ManageTestsPage = () => {
     if (isLoading) { return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-500">Loading tests...</div>; }
     if (error) { return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-red-500">Error: {error}</div>; }
 
+    const { isOpen } = useSidebar();
     return (
         <div className="flex font-sans bg-gray-50 min-h-screen">
             <AdminSidebar />
-            <div className="flex-1 ml-64 flex flex-col">
+            <div className={`flex-1 flex flex-col transition-all duration-300 ${isOpen ? "ml-64" : "ml-16"}`}>
                 <AdminHeader userName={user?.name || "Admin"} />
                 <main className="flex-1 mt-20 p-8 overflow-y-auto">
                     <motion.div
@@ -185,12 +187,12 @@ const ManageTestsPage = () => {
                                                         </td>
                                                         <td className="px-6 py-4 text-center">
                                                             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${status === 'Upcoming' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                                                    status === 'Live' ? 'bg-green-50 text-green-700 border-green-200 animate-pulse' :
-                                                                        'bg-gray-100 text-gray-600 border-gray-200'
+                                                                status === 'Live' ? 'bg-green-50 text-green-700 border-green-200 animate-pulse' :
+                                                                    'bg-gray-100 text-gray-600 border-gray-200'
                                                                 }`}>
                                                                 <span className={`w-2 h-2 rounded-full ${status === 'Upcoming' ? 'bg-blue-500' :
-                                                                        status === 'Live' ? 'bg-green-500' :
-                                                                            'bg-gray-500'
+                                                                    status === 'Live' ? 'bg-green-500' :
+                                                                        'bg-gray-500'
                                                                     }`}></span>
                                                                 {status}
                                                             </span>
