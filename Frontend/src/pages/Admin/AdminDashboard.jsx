@@ -2,11 +2,8 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Users, FileText, Clock, ArrowRight, TrendingUp, Activity } from "lucide-react";
-import AdminSidebar from "../../components/AdminSidebar";
-import { useSidebar } from "../../context/SidebarContext";
-import AdminHeader from "../../components/AdminHeader";
-import teacherService from "../../services/teacherService"; // For getting students
-import testService from "../../services/testService"; // For getting tests
+import teacherService from "../../services/teacherService";
+import testService from "../../services/testService";
 import Footer from "../../components/Footer";
 
 const StatCard = ({ title, value, icon: Icon, color, linkTo, trend }) => (
@@ -41,7 +38,6 @@ const StatCard = ({ title, value, icon: Icon, color, linkTo, trend }) => (
 );
 
 const AdminDashboard = () => {
-    const { isOpen } = useSidebar();
     const user = JSON.parse(localStorage.getItem('user') || '{}');
 
     const [stats, setStats] = useState({
@@ -87,80 +83,69 @@ const AdminDashboard = () => {
         fetchDashboardData();
     }, []);
 
-    if (isLoading) {
-        return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-500">Loading dashboard...</div>;
-    }
-
-    if (error) {
-        return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-red-500">Error: {error}</div>;
-    }
+    if (isLoading) return <div className="flex items-center justify-center h-64 text-gray-500">Loading dashboard...</div>;
+    if (error) return <div className="flex items-center justify-center h-64 text-red-500">Error: {error}</div>;
 
     return (
-        <div className="bg-gray-50 font-sans flex min-h-screen">
-            <AdminSidebar />
-            <div className={`flex-1 flex flex-col transition-all duration-300 ${isOpen ? "ml-64" : "ml-16"}`}>
-                <AdminHeader userName={user?.name || "Admin"} />
-                <main className="flex-1 mt-20 p-8 overflow-y-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="max-w-7xl mx-auto"
-                    >
-                        {/* Hero Section */}
+        <div className="p-8">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="max-w-7xl mx-auto"
+            >
+                {/* Hero Section */}
 
 
-                        {/* Stats Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                            <StatCard
-                                title="Pending Approvals"
-                                value={stats.pendingApprovals}
-                                icon={Clock}
-                                color="yellow"
-                                linkTo="/admin/StudentApprovalsPage"
-                                trend={stats.pendingApprovals > 0 ? "Action Required" : "All Caught Up"}
-                            />
-                            <StatCard
-                                title="Total Students"
-                                value={stats.totalStudents}
-                                icon={Users}
-                                color="green"
-                                linkTo="/admin/all-students"
-                                trend="+12% this month"
-                            />
-                            <StatCard
-                                title="Total Tests Created"
-                                value={stats.totalTests}
-                                icon={FileText}
-                                color="blue"
-                                linkTo="/admin/manage-tests"
-                                trend="Active"
-                            />
-                        </div>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                    <StatCard
+                        title="Pending Approvals"
+                        value={stats.pendingApprovals}
+                        icon={Clock}
+                        color="yellow"
+                        linkTo="/admin/StudentApprovalsPage"
+                        trend={stats.pendingApprovals > 0 ? "Action Required" : "All Caught Up"}
+                    />
+                    <StatCard
+                        title="Total Students"
+                        value={stats.totalStudents}
+                        icon={Users}
+                        color="green"
+                        linkTo="/admin/all-students"
+                        trend="+12% this month"
+                    />
+                    <StatCard
+                        title="Total Tests Created"
+                        value={stats.totalTests}
+                        icon={FileText}
+                        color="blue"
+                        linkTo="/admin/manage-tests"
+                        trend="Active"
+                    />
+                </div>
 
-                        {/* Recent Activity Section (Placeholder for now) */}
-                        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                            <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
-                                <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                                    <Activity className="w-5 h-5 text-blue-500" />
-                                    Recent Activity
-                                </h3>
-                                <button className="text-sm font-semibold text-blue-600 hover:text-blue-700">View All</button>
-                            </div>
-                            <div className="p-12 text-center text-gray-400">
-                                <div className="mx-auto w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                                    <Activity className="w-8 h-8 text-gray-300" />
-                                </div>
-                                <p className="text-lg font-medium text-gray-500">No recent activity to show</p>
-                                <p className="text-sm">Activity feed will appear here once students start taking tests.</p>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    <div className="mt-12">
-                        <Footer />
+                {/* Recent Activity Section (Placeholder for now) */}
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                    <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
+                        <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                            <Activity className="w-5 h-5 text-blue-500" />
+                            Recent Activity
+                        </h3>
+                        <button className="text-sm font-semibold text-blue-600 hover:text-blue-700">View All</button>
                     </div>
-                </main>
+                    <div className="p-12 text-center text-gray-400">
+                        <div className="mx-auto w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                            <Activity className="w-8 h-8 text-gray-300" />
+                        </div>
+                        <p className="text-lg font-medium text-gray-500">No recent activity to show</p>
+                        <p className="text-sm">Activity feed will appear here once students start taking tests.</p>
+                    </div>
+                </div>
+            </motion.div>
+
+            <div className="mt-12">
+                <Footer />
             </div>
         </div>
     );

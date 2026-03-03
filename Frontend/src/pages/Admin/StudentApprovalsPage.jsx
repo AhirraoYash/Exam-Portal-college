@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, User, Mail, Hash, ShieldAlert, UserCheck, UserX } from 'lucide-react';
 import toast from 'react-hot-toast';
-import AdminSidebar from '../../components/AdminSidebar';
-import AdminHeader from '../../components/AdminHeader';
 import teacherService from '../../services/teacherService';
-import { useSidebar } from '../../context/SidebarContext';
 
 const StudentApprovalCard = ({ student, onApprove, onReject }) => (
     <motion.div
@@ -115,58 +112,50 @@ const StudentApprovalsPage = () => {
         }
     };
 
-    if (isLoading) { return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-500">Loading requests...</div>; }
-    if (error) { return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-red-500">Error: {error}</div>; }
-
-    const { isOpen } = useSidebar();
+    if (isLoading) return <div className="flex items-center justify-center h-64 text-gray-500">Loading requests...</div>;
+    if (error) return <div className="flex items-center justify-center h-64 text-red-500">Error: {error}</div>;
     return (
-        <div className="bg-gray-50 font-sans flex min-h-screen">
-            <AdminSidebar />
-            <div className={`flex-1 flex flex-col transition-all duration-300 ${isOpen ? "ml-64" : "ml-16"}`}>
-                <AdminHeader userName={user?.name || "Admin"} />
-                <main className="flex-1 mt-20 p-8 overflow-y-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="max-w-5xl mx-auto"
-                    >
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                            <div>
-                                <h2 className="text-3xl font-extrabold text-gray-800 tracking-tight">Student Approvals</h2>
-                                <p className="text-gray-500 mt-1">Review pending registration requests from students.</p>
-                            </div>
-                            <div className="flex items-center gap-2 px-4 py-2 bg-yellow-50 text-yellow-700 rounded-full border border-yellow-200 shadow-sm">
-                                <ShieldAlert className="w-5 h-5" />
-                                <span className="font-bold">{pendingStudents.length}</span>
-                                <span className="font-medium">Pending Requests</span>
-                            </div>
-                        </div>
+        <div className="p-8">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="max-w-5xl mx-auto"
+            >
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                    <div>
+                        <h2 className="text-3xl font-extrabold text-gray-800 tracking-tight">Student Approvals</h2>
+                        <p className="text-gray-500 mt-1">Review pending registration requests from students.</p>
+                    </div>
+                    <div className="flex items-center gap-2 px-4 py-2 bg-yellow-50 text-yellow-700 rounded-full border border-yellow-200 shadow-sm">
+                        <ShieldAlert className="w-5 h-5" />
+                        <span className="font-bold">{pendingStudents.length}</span>
+                        <span className="font-medium">Pending Requests</span>
+                    </div>
+                </div>
 
-                        <div className="space-y-4">
-                            <AnimatePresence mode='popLayout'>
-                                {pendingStudents.length > 0 ? (
-                                    pendingStudents.map((student) => (
-                                        <StudentApprovalCard key={student._id} student={student} onApprove={handleApprove} onReject={handleReject} />
-                                    ))
-                                ) : (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        className="flex flex-col items-center justify-center py-16 bg-white rounded-3xl shadow-sm border border-gray-100 text-center"
-                                    >
-                                        <div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mb-4">
-                                            <Check className="w-10 h-10" />
-                                        </div>
-                                        <h3 className="text-xl font-bold text-gray-800 mb-2">All Caught Up!</h3>
-                                        <p className="text-gray-500 max-w-sm mx-auto">There are no pending student approval requests at the moment.</p>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </motion.div>
-                </main>
-            </div>
+                <div className="space-y-4">
+                    <AnimatePresence mode='popLayout'>
+                        {pendingStudents.length > 0 ? (
+                            pendingStudents.map((student) => (
+                                <StudentApprovalCard key={student._id} student={student} onApprove={handleApprove} onReject={handleReject} />
+                            ))
+                        ) : (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="flex flex-col items-center justify-center py-16 bg-white rounded-3xl shadow-sm border border-gray-100 text-center"
+                            >
+                                <div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mb-4">
+                                    <Check className="w-10 h-10" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-800 mb-2">All Caught Up!</h3>
+                                <p className="text-gray-500 max-w-sm mx-auto">There are no pending student approval requests at the moment.</p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </motion.div>
         </div>
     );
 };
