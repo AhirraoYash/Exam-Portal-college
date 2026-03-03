@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useSidebar } from '../context/SidebarContext';
 
 // --- ICONS ---
 const ChevronDownIcon = () => (
@@ -9,9 +10,16 @@ const ChevronDownIcon = () => (
     </svg>
 );
 
+const MenuIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+);
+
 const Header = ({ studentName }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const navigate = useNavigate();
+    const { isOpen, toggle } = useSidebar();
 
     const handleProfile = () => {
         navigate('/profile'); // Redirect to profile page
@@ -25,17 +33,23 @@ const Header = ({ studentName }) => {
     };
 
     return (
-        <header className="fixed top-0 left-64 w-[calc(100%-16rem)] h-20 flex items-center justify-between border-b bg-white/80 backdrop-blur-sm px-10 z-40">
-            {/* Page Title */}
-            <div>
-                <h2 className="text-2xl font-bold text-gray-800">Student Dashboard</h2>
+        <header className={`fixed top-0 w-full h-20 flex items-center justify-between border-b bg-white/90 backdrop-blur-sm px-4 md:px-10 z-40 shadow-sm transition-all duration-300 ${isOpen ? 'md:w-[calc(100%-16rem)] md:left-64' : 'md:w-[calc(100%-4rem)] md:left-16'}`}>
+            {/* Left Section (Menu Toggle + Title) */}
+            <div className="flex items-center gap-4">
+                <button
+                    onClick={toggle}
+                    className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                >
+                    <MenuIcon />
+                </button>
+                <h2 className="text-xl md:text-2xl font-bold text-gray-800">Student Dashboard</h2>
             </div>
 
             {/* Right-side actions */}
             <div className="flex items-center gap-6">
                 {/* Profile Dropdown */}
                 <div className="relative">
-                    <button 
+                    <button
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                         className="flex items-center gap-3"
                     >
@@ -52,27 +66,27 @@ const Header = ({ studentName }) => {
                     {/* Dropdown Menu */}
                     <AnimatePresence>
                         {isDropdownOpen && (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.2 }}
                                 className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-50"
                             >
-                                <button 
+                                <button
                                     onClick={handleProfile}
                                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50"
                                 >
                                     My Profile
                                 </button>
-                                <button 
-                                    onClick={() => console.log("Settings clicked")} 
+                                <button
+                                    onClick={() => console.log("Settings clicked")}
                                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50"
                                 >
                                     Settings
                                 </button>
                                 <div className="border-t my-1"></div>
-                                <button 
+                                <button
                                     onClick={handleLogout}
                                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                                 >
