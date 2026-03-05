@@ -47,7 +47,11 @@ const Header = ({ studentName }) => {
                 >
                     <MenuIcon />
                 </button>
-                <h2 className="text-lg md:text-xl font-bold text-gray-800">Student Dashboard</h2>
+                <div className="flex items-center gap-2">
+                    <div className="w-1 h-6 rounded-full" style={{ background: 'linear-gradient(180deg, #6d28d9, #4f46e5)' }} />
+                    <h2 className="text-lg font-bold text-gray-800 hidden sm:block">EduTestify Student</h2>
+                    <h2 className="text-lg font-bold text-gray-800 sm:hidden">Student</h2>
+                </div>
             </div>
 
             {/* Right: Profile */}

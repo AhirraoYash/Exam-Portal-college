@@ -190,7 +190,7 @@ const MCQTestPage = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     className="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden"
                 >
-                    <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-center text-white">
+                    <div className="p-8 text-center text-white" style={{ background: 'linear-gradient(135deg, #4f46e5, #6d28d9)' }}>
                         <div className="mx-auto bg-white/20 w-20 h-20 rounded-full flex items-center justify-center mb-4 backdrop-blur-sm">
                             <CheckCircle className="w-10 h-10 text-white" />
                         </div>
@@ -202,7 +202,7 @@ const MCQTestPage = () => {
                             <div className="relative w-40 h-40">
                                 <svg className="w-full h-full transform -rotate-90">
                                     <circle cx="80" cy="80" r="70" className="stroke-current text-gray-100" strokeWidth="10" fill="transparent" />
-                                    <circle cx="80" cy="80" r="70" className="stroke-current text-blue-600" strokeWidth="10" fill="transparent" strokeDasharray={440} strokeDashoffset={440 - (440 * percentage) / 100} strokeLinecap="round" />
+                                    <circle cx="80" cy="80" r="70" className="stroke-current text-indigo-600" strokeWidth="10" fill="transparent" strokeDasharray={440} strokeDashoffset={440 - (440 * percentage) / 100} strokeLinecap="round" />
                                 </svg>
                                 <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center flex-col">
                                     <span className="text-4xl font-bold text-gray-800">{percentage}%</span>
@@ -211,7 +211,7 @@ const MCQTestPage = () => {
                             </div>
                         </div>
                         <p className="text-xl font-medium text-gray-800 mb-8">
-                            You scored <span className="text-blue-600 font-bold">{score}</span> out of {totalQuestions}
+                            You scored <span className="text-indigo-600 font-bold">{score}</span> out of {totalQuestions}
                         </p>
                         <button
                             onClick={() => navigate('/dashboard')}
@@ -245,7 +245,7 @@ const MCQTestPage = () => {
                     <div className="hidden md:flex items-center gap-2 text-sm text-gray-500 mr-2">
                         <span>Question {currentQuestionIndex + 1} of {testData.questions.length}</span>
                     </div>
-                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-mono font-bold text-sm ${timeLeft < 300 ? 'bg-red-50 text-red-600 animate-pulse' : 'bg-blue-50 text-blue-600'}`}>
+                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-mono font-bold text-sm ${timeLeft < 300 ? 'bg-red-50 text-red-600 animate-pulse' : 'bg-indigo-50 text-indigo-600'}`}>
                         <Clock className="w-4 h-4" />
                         <span>{formatTime(timeLeft)}</span>
                     </div>
@@ -265,9 +265,9 @@ const MCQTestPage = () => {
                                 <button
                                     key={q._id}
                                     onClick={() => { setCurrentQuestionIndex(idx); setIsSidebarOpen(false); }}
-                                    className={`aspect-square rounded-lg flex items-center justify-center text-sm font-semibold transition-all ${currentQuestionIndex === idx ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-200' :
-                                            answers[q._id] ? 'bg-green-100 text-green-700 border border-green-200' :
-                                                'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-transparent'
+                                    className={`aspect-square rounded-lg flex items-center justify-center text-sm font-semibold transition-all ${currentQuestionIndex === idx ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-200' :
+                                        answers[q._id] ? 'bg-green-100 text-green-700 border border-green-200' :
+                                            'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-transparent'
                                         }`}
                                 >
                                     {idx + 1}
@@ -276,7 +276,7 @@ const MCQTestPage = () => {
                         </div>
                         <div className="mt-auto p-4 border-t border-gray-100 bg-gray-50">
                             <div className="flex items-center gap-4 text-xs text-gray-500 justify-center">
-                                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-blue-600 rounded-full"></div> Current</div>
+                                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-indigo-600 rounded-full"></div> Current</div>
                                 <div className="flex items-center gap-1"><div className="w-3 h-3 bg-green-100 border border-green-200 rounded-full"></div> Answered</div>
                                 <div className="flex items-center gap-1"><div className="w-3 h-3 bg-gray-100 border border-gray-200 rounded-full"></div> Pending</div>
                             </div>
@@ -300,7 +300,7 @@ const MCQTestPage = () => {
                             {/* Question Header */}
                             <div className="p-6 lg:p-10 border-b border-gray-100">
                                 <div className="flex justify-between items-center mb-6">
-                                    <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                                    <span className="text-sm font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
                                         Question {currentQuestionIndex + 1}
                                     </span>
                                     <span className="text-sm text-gray-400">
@@ -322,13 +322,13 @@ const MCQTestPage = () => {
                                             whileHover={{ scale: 1.01 }}
                                             whileTap={{ scale: 0.99 }}
                                             className={`p-4 lg:p-5 rounded-xl border text-left text-base lg:text-lg transition-all flex items-center gap-4 group ${answers[currentQuestion._id] === option
-                                                    ? 'bg-blue-600 border-blue-600 text-white shadow-md'
-                                                    : 'bg-white border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-sm'
+                                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
+                                                : 'bg-white border-gray-200 text-gray-700 hover:border-indigo-300 hover:shadow-sm'
                                                 }`}
                                         >
                                             <span className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold transition-colors ${answers[currentQuestion._id] === option
-                                                    ? 'bg-white/20 text-white'
-                                                    : 'bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600'
+                                                ? 'bg-white/20 text-white'
+                                                : 'bg-gray-100 text-gray-500 group-hover:bg-indigo-50 group-hover:text-indigo-600'
                                                 }`}>
                                                 {String.fromCharCode(65 + index)}
                                             </span>
@@ -359,7 +359,8 @@ const MCQTestPage = () => {
                             ) : (
                                 <button
                                     onClick={handleNext}
-                                    className="flex items-center gap-2 px-8 py-3 font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+                                    className="flex items-center gap-2 px-8 py-3 font-bold text-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+                                    style={{ background: 'linear-gradient(135deg, #6d28d9, #4f46e5)', boxShadow: '0 4px 20px rgba(109,40,217,0.3)' }}
                                 >
                                     Next Question <ChevronRight className="w-5 h-5" />
                                 </button>

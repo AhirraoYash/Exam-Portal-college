@@ -44,7 +44,7 @@ const AddTeacherPage = () => {
     };
 
     return (
-        <div className="p-8">
+        <div className="p-4 md:p-8">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -82,7 +82,7 @@ const AddTeacherPage = () => {
                                     required
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
                                     placeholder="Name Surname"
                                 />
                             </div>
@@ -101,7 +101,7 @@ const AddTeacherPage = () => {
                                     required
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
                                     placeholder="teacher@university.edu"
                                 />
                             </div>
@@ -120,7 +120,7 @@ const AddTeacherPage = () => {
                                     required
                                     value={formData.password}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
                                     placeholder="••••••••"
                                     minLength={6}
                                 />
@@ -131,7 +131,8 @@ const AddTeacherPage = () => {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl shadow-lg shadow-blue-200 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed transition-all transform hover:-translate-y-0.5"
+                                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl shadow-lg text-sm font-bold text-white disabled:opacity-60 disabled:cursor-not-allowed transition-all transform hover:-translate-y-0.5"
+                                style={{ background: 'linear-gradient(135deg, #6d28d9, #4f46e5)', boxShadow: '0 4px 20px rgba(109,40,217,0.3)' }}
                             >
                                 <UserPlus className="w-5 h-5" />
                                 {isLoading ? 'Creating Account...' : 'Create Teacher Account'}

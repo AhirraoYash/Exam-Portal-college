@@ -41,7 +41,7 @@ const TestCard = ({ test, isSubmitted }) => {
                 return {
                     text: 'Start Test',
                     icon: PlayCircle,
-                    className: 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200',
+                    className: 'text-white shadow-lg',
                     disabled: false
                 };
             case 'Upcoming':
@@ -82,16 +82,16 @@ const TestCard = ({ test, isSubmitted }) => {
             className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full hover:shadow-xl transition-all duration-300"
         >
             <div className={`h-1.5 w-full ${isSubmitted ? 'bg-purple-500' :
-                    status === 'Live' ? 'bg-blue-500' :
-                        status === 'Upcoming' ? 'bg-yellow-500' : 'bg-gray-300'
+                status === 'Live' ? 'bg-indigo-500' :
+                    status === 'Upcoming' ? 'bg-yellow-500' : 'bg-gray-300'
                 }`} />
 
             <div className="p-6 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${isSubmitted ? 'bg-purple-50 text-purple-700' :
-                            status === 'Live' ? 'bg-blue-50 text-blue-700 animate-pulse' :
-                                status === 'Upcoming' ? 'bg-yellow-50 text-yellow-700' :
-                                    'bg-gray-50 text-gray-600'
+                        status === 'Live' ? 'bg-indigo-50 text-indigo-700 animate-pulse' :
+                            status === 'Upcoming' ? 'bg-yellow-50 text-yellow-700' :
+                                'bg-gray-50 text-gray-600'
                         }`}>
                         {isSubmitted ? 'Completed' : status}
                     </span>
@@ -123,6 +123,7 @@ const TestCard = ({ test, isSubmitted }) => {
                     onClick={handleButtonClick}
                     disabled={btn.disabled && !isSubmitted}
                     className={`mt-6 w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-bold text-sm transition-all ${btn.className} border`}
+                    style={status === 'Live' && !isSubmitted ? { background: 'linear-gradient(135deg, #6d28d9, #4f46e5)', boxShadow: '0 4px 20px rgba(109,40,217,0.3)' } : {}}
                 >
                     <btn.icon className="w-4 h-4" />
                     {btn.text}

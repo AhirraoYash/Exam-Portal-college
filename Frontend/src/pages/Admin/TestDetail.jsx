@@ -92,7 +92,7 @@ const TestDetail = () => {
     if (!test) return null;
 
     return (
-        <div className="p-8">
+        <div className="p-4 md:p-8">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -101,8 +101,8 @@ const TestDetail = () => {
             >
                 {/* Back Button */}
                 <div className="mb-6">
-                    <button onClick={() => navigate(-1)} className="group flex items-center text-gray-500 hover:text-blue-600 transition-colors font-medium">
-                        <div className="p-2 rounded-full bg-white group-hover:bg-blue-50 mr-3 shadow-sm transition-colors">
+                    <button onClick={() => navigate(-1)} className="group flex items-center text-gray-500 hover:text-indigo-600 transition-colors font-medium">
+                        <div className="p-2 rounded-full bg-white group-hover:bg-indigo-50 mr-3 shadow-sm transition-colors">
                             <ArrowLeft className="w-5 h-5" />
                         </div>
                         Back to Tests
@@ -110,7 +110,7 @@ const TestDetail = () => {
                 </div>
 
                 {/* Hero Section */}
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl shadow-2xl p-8 mb-8 text-white relative overflow-hidden">
+                <div className="rounded-3xl shadow-2xl p-6 md:p-8 mb-8 text-white relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #4f46e5, #6d28d9)' }}>
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-10 -mb-10 blur-xl"></div>
 
@@ -120,7 +120,7 @@ const TestDetail = () => {
                                 TEST DETAILS
                             </div>
                             <h2 className="text-4xl font-extrabold tracking-tight mb-2">{test.name}</h2>
-                            <div className="flex items-center gap-2 text-blue-100 items-center">
+                            <div className="flex items-center gap-2 text-indigo-200 items-center">
                                 <span className="opacity-80">Created by</span>
                                 <span className="font-semibold bg-white/10 px-2 py-0.5 rounded text-sm">{test.createdBy?.name || 'Admin'}</span>
                             </div>
@@ -128,11 +128,11 @@ const TestDetail = () => {
                         <div className="flex gap-3">
                             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center min-w-[100px] border border-white/10">
                                 <div className="text-3xl font-bold">{test.questions.length}</div>
-                                <div className="text-xs text-blue-100 uppercase tracking-wide font-semibold">Questions</div>
+                                <div className="text-xs text-indigo-200 uppercase tracking-wide font-semibold">Questions</div>
                             </div>
                             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center min-w-[100px] border border-white/10">
                                 <div className="text-3xl font-bold">100</div>
-                                <div className="text-xs text-blue-100 uppercase tracking-wide font-semibold">Marks</div>
+                                <div className="text-xs text-indigo-200 uppercase tracking-wide font-semibold">Marks</div>
                             </div>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ const TestDetail = () => {
                             </div>
                             <div className="p-6 space-y-6">
                                 <div className="flex items-start gap-4">
-                                    <div className="p-3 rounded-xl bg-blue-50 text-blue-600">
+                                    <div className="p-3 rounded-xl bg-indigo-50 text-indigo-600">
                                         <CalendarDays className="w-6 h-6" />
                                     </div>
                                     <div>
@@ -183,8 +183,8 @@ const TestDetail = () => {
                                 <h3 className="font-bold text-gray-800">Quick Actions</h3>
                             </div>
                             <div className="p-6 space-y-3">
-                                <button onClick={() => navigate(`/admin/test-results/${testId}`)} className="w-full flex items-center justify-between px-4 py-3 bg-white border-2 border-blue-50 text-gray-700 rounded-xl hover:border-blue-500 hover:text-blue-600 transition-all group font-medium">
-                                    <span className="flex items-center gap-3"><Users className="w-5 h-5 text-gray-400 group-hover:text-blue-500" /> Student Results</span>
+                                <button onClick={() => navigate(`/admin/test-results/${testId}`)} className="w-full flex items-center justify-between px-4 py-3 bg-white border-2 border-indigo-50 text-gray-700 rounded-xl hover:border-indigo-500 hover:text-indigo-600 transition-all group font-medium">
+                                    <span className="flex items-center gap-3"><Users className="w-5 h-5 text-gray-400 group-hover:text-indigo-500" /> Student Results</span>
                                     <ArrowLeft className="w-4 h-4 rotate-180 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </button>
 
@@ -218,7 +218,7 @@ const TestDetail = () => {
                                 {test.questions.map((q, idx) => (
                                     <div key={q._id || idx} className="group">
                                         <div className="flex gap-5">
-                                            <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center font-bold text-gray-500 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                            <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center font-bold text-gray-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                                                 {idx + 1}
                                             </div>
                                             <div className="flex-1">

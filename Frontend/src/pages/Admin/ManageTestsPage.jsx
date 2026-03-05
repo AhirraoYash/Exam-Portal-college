@@ -79,7 +79,7 @@ const ManageTestsPage = () => {
     if (error) return <div className="flex items-center justify-center h-64 text-red-500">Error: {error}</div>;
 
     return (
-        <div className="p-8">
+        <div className="p-4 md:p-8">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -94,7 +94,8 @@ const ManageTestsPage = () => {
                     </div>
                     <button
                         onClick={handleCreateTest}
-                        className="group flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-blue-200 hover:bg-blue-700 hover:shadow-blue-300 transition-all transform hover:-translate-y-1"
+                        className="group flex items-center gap-2 text-white px-5 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-1"
+                        style={{ background: 'linear-gradient(135deg, #6d28d9, #4f46e5)', boxShadow: '0 4px 20px rgba(109,40,217,0.3)' }}
                     >
                         <div className="bg-white/20 p-1 rounded-lg group-hover:bg-white/30 transition-colors">
                             <Plus className="w-5 h-5" />
@@ -112,7 +113,7 @@ const ManageTestsPage = () => {
                             placeholder="Search tests by name..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         />
                     </div>
                     <div className="relative min-w-[200px] w-full md:w-auto">
@@ -120,7 +121,7 @@ const ManageTestsPage = () => {
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white transition-all cursor-pointer"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none bg-white transition-all cursor-pointer"
                         >
                             <option value="All">All Statuses</option>
                             <option value="Upcoming">Upcoming</option>
@@ -148,10 +149,10 @@ const ManageTestsPage = () => {
                                     filteredTests.map((test) => {
                                         const status = getTestStatus(test);
                                         return (
-                                            <tr key={test._id} className="hover:bg-blue-50/50 transition-colors group">
+                                            <tr key={test._id} className="hover:bg-indigo-50/50 transition-colors group">
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-100 transition-colors">
+                                                        <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl group-hover:bg-indigo-100 transition-colors">
                                                             <FileText className="w-6 h-6" />
                                                         </div>
                                                         <div>
@@ -178,11 +179,11 @@ const ManageTestsPage = () => {
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 text-center">
-                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${status === 'Upcoming' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${status === 'Upcoming' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
                                                         status === 'Live' ? 'bg-green-50 text-green-700 border-green-200 animate-pulse' :
                                                             'bg-gray-100 text-gray-600 border-gray-200'
                                                         }`}>
-                                                        <span className={`w-2 h-2 rounded-full ${status === 'Upcoming' ? 'bg-blue-500' :
+                                                        <span className={`w-2 h-2 rounded-full ${status === 'Upcoming' ? 'bg-indigo-500' :
                                                             status === 'Live' ? 'bg-green-500' :
                                                                 'bg-gray-500'
                                                             }`}></span>
@@ -192,7 +193,7 @@ const ManageTestsPage = () => {
                                                 <td className="px-6 py-4 text-right">
                                                     <Link
                                                         to={`/admin/tests/${test._id}`}
-                                                        className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all shadow-sm"
+                                                        className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white border border-gray-200 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all shadow-sm"
                                                         title="View Details"
                                                     >
                                                         <ChevronRight className="w-5 h-5" />

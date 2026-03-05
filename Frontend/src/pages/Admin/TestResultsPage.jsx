@@ -72,7 +72,7 @@ const TestResultsPage = () => {
     if (error) return <div className="flex items-center justify-center h-64 text-red-500">Error: {error}</div>;
 
     return (
-        <div className="p-8">
+        <div className="p-4 md:p-8">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -83,7 +83,7 @@ const TestResultsPage = () => {
                 <div className="mb-8">
                     <button
                         onClick={() => navigate(-1)}
-                        className="group flex items-center text-gray-500 hover:text-blue-600 transition-colors mb-4 font-medium"
+                        className="group flex items-center text-gray-500 hover:text-indigo-600 transition-colors mb-4 font-medium"
                     >
                         <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
                         Back to Test Details
@@ -109,7 +109,7 @@ const TestResultsPage = () => {
                 {/* Statistics Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                     {[
-                        { label: 'Total Students', value: totalStudents, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
+                        { label: 'Total Students', value: totalStudents, icon: Users, color: 'text-indigo-600', bg: 'bg-indigo-50' },
                         { label: 'Submission Rate', value: `${submissionRate}%`, icon: BarChart2, color: 'text-purple-600', bg: 'bg-purple-50' },
                         { label: 'Average Score', value: averageScore, icon: TrendingUp, color: 'text-amber-600', bg: 'bg-amber-50' },
                         { label: 'Highest Score', value: `${highestScore} / ${testDetails.totalMarks}`, icon: Award, color: 'text-emerald-600', bg: 'bg-emerald-50' },

@@ -53,7 +53,7 @@ const StatCard = ({ title, value, icon: Icon, color, linkTo, trend }) => (
                 <h3 className="text-gray-500 text-sm font-medium mb-1">{title}</h3>
                 <p className="text-4xl font-extrabold text-gray-800 tracking-tight">{value}</p>
             </div>
-            <div className="mt-4 flex items-center text-sm font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+            <div className="mt-4 flex items-center text-sm font-semibold text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
                 View Details <ArrowRight className="w-4 h-4 ml-1" />
             </div>
         </motion.div>
@@ -130,7 +130,7 @@ const AdminDashboard = () => {
                         linkTo="/admin/StudentApprovalsPage" trend={stats.pendingApprovals > 0 ? "Action Required" : "All Caught Up"} />
                     <StatCard title="Total Students" value={stats.totalStudents} icon={Users} color="green"
                         linkTo="/admin/all-students" trend="+Active" />
-                    <StatCard title="Total Tests Created" value={stats.totalTests} icon={FileText} color="blue"
+                    <StatCard title="Total Tests Created" value={stats.totalTests} icon={FileText} color="indigo"
                         linkTo="/admin/manage-tests" trend="Active" />
                 </div>
 

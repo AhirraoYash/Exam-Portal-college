@@ -78,7 +78,7 @@ const AllStudentsPage = () => {
     if (error) return <div className="flex items-center justify-center h-64 text-red-500">Error: {error}</div>;
 
     return (
-        <div className="p-8">
+        <div className="p-4 md:p-8">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -102,7 +102,7 @@ const AllStudentsPage = () => {
                             placeholder="Search by name, email, or PRN..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         />
                     </div>
                     <div className="ml-4 text-sm text-gray-500">
@@ -125,10 +125,10 @@ const AllStudentsPage = () => {
                             <tbody className="divide-y divide-gray-50">
                                 {filteredStudents.length > 0 ? (
                                     filteredStudents.map((student) => (
-                                        <tr key={student._id} className="hover:bg-blue-50/50 transition-colors group">
+                                        <tr key={student._id} className="hover:bg-indigo-50/50 transition-colors group">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg">
+                                                    <div className="h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg">
                                                         {student.name.charAt(0).toUpperCase()}
                                                     </div>
                                                     <div>

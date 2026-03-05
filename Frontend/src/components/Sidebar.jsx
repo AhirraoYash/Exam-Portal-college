@@ -61,28 +61,30 @@ const Sidebar = () => {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed left-0 top-0 h-screen bg-white shadow-xl border-r border-gray-100 z-50 flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'w-64 translate-x-0' : 'w-16 -translate-x-full md:translate-x-0'}`}>
-
+      <aside
+        className={`fixed left-0 top-0 h-screen z-50 flex flex-col transition-all duration-300 ease-in-out border-r border-gray-100 ${isOpen ? 'w-64 translate-x-0' : 'w-16 -translate-x-full md:translate-x-0'}`}
+        style={{ background: 'linear-gradient(180deg, #1e1b4b 0%, #312e81 100%)' }}
+      >
         {/* Brand Header */}
-        <div className={`flex items-center h-16 bg-indigo-600 text-white border-b border-indigo-700 flex-shrink-0 px-3 ${isOpen ? 'justify-between' : 'justify-center'}`}>
+        <div className={`flex items-center h-16 border-b border-white/10 flex-shrink-0 px-3 ${isOpen ? 'justify-between' : 'justify-center'}`}>
           {isOpen && (
-            <div className="flex items-center gap-2 overflow-hidden">
-              <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-sm">S</span>
+            <div className="flex items-center gap-2.5 overflow-hidden">
+              <div className="h-8 w-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0 border border-white/20">
+                <span className="text-white font-bold text-xs">E</span>
               </div>
-              <span className="font-bold text-sm whitespace-nowrap">Student Portal</span>
+              <span className="font-bold text-white text-sm whitespace-nowrap tracking-wide">EduTestify</span>
             </div>
           )}
           {/* Desktop collapse toggle */}
           <button
             onClick={toggle}
-            className="hidden md:flex h-8 w-8 rounded-lg bg-indigo-700 hover:bg-indigo-800 items-center justify-center text-white transition-colors flex-shrink-0"
+            className="hidden md:flex h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20 items-center justify-center text-white/80 hover:text-white transition-colors flex-shrink-0"
             title={isOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           >
             {isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </button>
           {/* Mobile close */}
-          <button onClick={toggle} className="md:hidden h-8 w-8 rounded-lg hover:bg-indigo-700 flex items-center justify-center text-white transition-colors flex-shrink-0">
+          <button onClick={toggle} className="md:hidden h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors flex-shrink-0">
             <ChevronLeftIcon />
           </button>
         </div>
@@ -95,18 +97,21 @@ const Sidebar = () => {
               to={item.to}
               title={!isOpen ? item.label : ''}
               className={({ isActive }) =>
-                `flex items-center mx-2 px-3 py-2.5 rounded-lg transition-all duration-200 ${isOpen ? 'gap-3' : 'justify-center'} ${isActive
-                  ? 'bg-indigo-50 text-indigo-700 font-semibold border-r-0'
-                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
+                `flex items-center mx-2 px-3 py-2.5 rounded-xl transition-all duration-200 ${isOpen ? 'gap-3' : 'justify-center'} ${isActive
+                  ? 'bg-white/15 text-white font-semibold shadow-lg shadow-black/10'
+                  : 'text-indigo-200 hover:bg-white/10 hover:text-white'
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <span className={`flex-shrink-0 ${isActive ? 'text-indigo-600' : ''}`}>{item.icon}</span>
+                  <span className="flex-shrink-0">{item.icon}</span>
                   <span className={`text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ${isOpen ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0 w-0'}`}>
                     {item.label}
                   </span>
+                  {isActive && isOpen && (
+                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-400" />
+                  )}
                 </>
               )}
             </NavLink>
@@ -114,11 +119,11 @@ const Sidebar = () => {
         </nav>
 
         {/* Logout */}
-        <div className="border-t border-gray-100 p-3">
+        <div className="border-t border-white/10 p-3">
           <button
             onClick={handleLogout}
             title={!isOpen ? 'Logout' : ''}
-            className={`flex w-full items-center rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all py-2.5 px-3 ${isOpen ? 'gap-3' : 'justify-center'}`}
+            className={`flex w-full items-center rounded-xl bg-white/10 text-red-300 hover:bg-red-500/20 hover:text-red-200 transition-all py-2.5 px-3 ${isOpen ? 'gap-3' : 'justify-center'}`}
           >
             <LogoutIcon />
             <span className={`text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-300 ${isOpen ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0 w-0'}`}>

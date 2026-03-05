@@ -13,7 +13,7 @@ const StudentApprovalCard = ({ student, onApprove, onReject }) => (
         className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:shadow-md transition-shadow"
     >
         <div className="flex items-center gap-4">
-            <div className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl shadow-sm">
+            <div className="h-14 w-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xl shadow-sm">
                 {student.name.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -115,7 +115,7 @@ const StudentApprovalsPage = () => {
     if (isLoading) return <div className="flex items-center justify-center h-64 text-gray-500">Loading requests...</div>;
     if (error) return <div className="flex items-center justify-center h-64 text-red-500">Error: {error}</div>;
     return (
-        <div className="p-8">
+        <div className="p-4 md:p-8">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

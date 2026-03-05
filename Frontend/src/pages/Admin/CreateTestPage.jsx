@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
-import { Upload, FileSpreadsheet, Calendar, Clock, CheckCircle, Save, X, AlertCircle } from 'lucide-react';
+import { Upload, FileSpreadsheet, Calendar, Clock, CheckCircle, Save, X, AlertCircle, Download } from 'lucide-react';
 import testService from '../../services/testService';
 
 const CreateTestPage = () => {
@@ -77,12 +77,54 @@ const CreateTestPage = () => {
                     throw new Error("The Excel file is empty or formatted incorrectly.");
                 }
 
-                // Format questions to match our backend schema
-                const formattedQuestions = jsonQuestions.map(q => ({
-                    questionText: q.questionText,
-                    options: [q.optionA, q.optionB, q.optionC, q.optionD],
-                    correctAnswer: q.correctAnswer,
-                }));
+                // --- Column Validation ---
+                // Excel must have exactly these 6 columns (header names):
+                // questionText | optionA | optionB | optionC | optionD | correctAnswer
+                const requiredColumns = ['questionText', 'optionA', 'optionB', 'optionC', 'optionD', 'correctAnswer'];
+                const actualColumns = Object.keys(jsonQuestions[0]);
+                const missingColumns = requiredColumns.filter(col => !actualColumns.includes(col));
+
+                if (missingColumns.length > 0) {
+                    throw new Error(
+                        `Missing columns in Excel: ${missingColumns.join(', ')}.\n` +
+                        `Your Excel must have these 6 column headers: questionText, optionA, optionB, optionC, optionD, correctAnswer`
+                    );
+                }
+
+                // --- Row Validation ---
+                const formattedQuestions = jsonQuestions.map((q, rowIdx) => {
+                    const rowNum = rowIdx + 2; // +2 because row 1 is header, data starts at row 2
+                    const options = [q.optionA, q.optionB, q.optionC, q.optionD];
+
+                    // Check for empty cells
+                    if (!q.questionText || !q.questionText.toString().trim()) {
+                        throw new Error(`Row ${rowNum}: Question text is empty.`);
+                    }
+                    options.forEach((opt, i) => {
+                        if (opt === undefined || opt === null || opt.toString().trim() === '') {
+                            throw new Error(`Row ${rowNum}: Option ${String.fromCharCode(65 + i)} is empty.`);
+                        }
+                    });
+                    if (!q.correctAnswer || !q.correctAnswer.toString().trim()) {
+                        throw new Error(`Row ${rowNum}: Correct answer is empty.`);
+                    }
+
+                    const answerText = q.correctAnswer.toString().trim();
+                    const optionTexts = options.map(opt => opt.toString().trim());
+
+                    // Validate that the answer matches one of the options
+                    if (!optionTexts.includes(answerText)) {
+                        throw new Error(
+                            `Row ${rowNum}: Answer "${answerText}" does not match any of the 4 options.`
+                        );
+                    }
+
+                    return {
+                        questionText: q.questionText.toString().trim(),
+                        options: optionTexts,
+                        correctAnswer: answerText,
+                    };
+                });
 
                 const totalMarks = formattedQuestions.length * parseInt(testDetails.marksPerQuestion, 10);
 
@@ -110,7 +152,7 @@ const CreateTestPage = () => {
     };
 
     return (
-        <div className="p-8">
+        <div className="p-4 md:p-8">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -138,7 +180,7 @@ const CreateTestPage = () => {
                             {/* Section 1: Test Details */}
                             <div>
                                 <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                    <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
                                         <FileSpreadsheet className="w-4 h-4" />
                                     </div>
                                     Basic Information
@@ -151,7 +193,7 @@ const CreateTestPage = () => {
                                             id="name"
                                             value={testDetails.name}
                                             onChange={handleInputChange}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
                                             placeholder="e.g. Mid-Term Mathematics"
                                             required
                                         />
@@ -163,7 +205,7 @@ const CreateTestPage = () => {
                                             id="marksPerQuestion"
                                             value={testDetails.marksPerQuestion}
                                             onChange={handleInputChange}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
                                             placeholder="e.g. 1"
                                             min="1"
                                             required
@@ -190,7 +232,7 @@ const CreateTestPage = () => {
                                             id="date"
                                             value={testDetails.date}
                                             onChange={handleInputChange}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
                                             required
                                         />
                                     </div>
@@ -203,7 +245,7 @@ const CreateTestPage = () => {
                                                 id="startTime"
                                                 value={testDetails.startTime}
                                                 onChange={handleInputChange}
-                                                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                                                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
                                                 required
                                             />
                                         </div>
@@ -217,7 +259,7 @@ const CreateTestPage = () => {
                                                 id="endTime"
                                                 value={testDetails.endTime}
                                                 onChange={handleInputChange}
-                                                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                                                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
                                                 required
                                             />
                                         </div>
@@ -229,14 +271,24 @@ const CreateTestPage = () => {
 
                             {/* Section 3: File Upload */}
                             <div>
-                                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                                        <Upload className="w-4 h-4" />
-                                    </div>
-                                    Upload Questions
-                                </h3>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                            <Upload className="w-4 h-4" />
+                                        </div>
+                                        Upload Questions
+                                    </h3>
+                                    <a
+                                        href="/mcq_template_with_full_answers.xlsx"
+                                        download="mcq_template.xlsx"
+                                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-indigo-600 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors"
+                                    >
+                                        <Download className="w-4 h-4" />
+                                        Download Template
+                                    </a>
+                                </div>
                                 <div
-                                    className={`mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-xl transition-all ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400 bg-gray-50'}`}
+                                    className={`mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-xl transition-all ${dragActive ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300 hover:border-gray-400 bg-gray-50'}`}
                                     onDragEnter={handleDrag}
                                     onDragLeave={handleDrag}
                                     onDragOver={handleDrag}
@@ -247,7 +299,7 @@ const CreateTestPage = () => {
                                             {questionFile ? <FileSpreadsheet className="h-12 w-12 text-green-500" /> : <Upload className="h-12 w-12" />}
                                         </div>
                                         <div className="flex text-sm text-gray-600 justify-center">
-                                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                                 <span>Upload a file</span>
                                                 <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept=".xlsx, .xls" />
                                             </label>
@@ -277,7 +329,8 @@ const CreateTestPage = () => {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 text-white font-semibold shadow-lg shadow-blue-200 hover:bg-blue-700 hover:shadow-blue-300 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-semibold shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={{ background: 'linear-gradient(135deg, #6d28d9, #4f46e5)', boxShadow: '0 4px 20px rgba(109,40,217,0.3)' }}
                             >
                                 <Save className="w-4 h-4" />
                                 {isLoading ? 'Creating Test...' : 'Create Test'}

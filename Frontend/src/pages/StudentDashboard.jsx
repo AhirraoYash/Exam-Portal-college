@@ -68,7 +68,7 @@ const StudentDashboard = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-blue-50 text-blue-600">
+                    <div className="p-3 rounded-xl bg-indigo-50 text-indigo-600">
                         <BookOpen className="w-6 h-6" />
                     </div>
                     <div>
@@ -99,7 +99,7 @@ const StudentDashboard = () => {
             {/* Tests Section */}
             <div className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                    <BookOpen className="w-6 h-6 text-blue-600" />
+                    <BookOpen className="w-6 h-6 text-indigo-600" />
                     Available Tests
                 </h2>
                 {allTests.length > 0 ? (
