@@ -2,6 +2,7 @@
 
 const User = require('../models/User.js');
 const generateToken = require('../utils/generateToken.js');
+const logAction = require('../utils/auditLogger.js');
 
 // @desc    Register a new student
 // @route   POST /api/users/signup
@@ -53,33 +54,33 @@ const registerUser = async (req, res) => {
 // @route   POST /api/users/login
 // @access  Public
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
-  
-    try {
-      // 1. Find the user by email
-      const user = await User.findOne({ email });
-  
-      // 2. Check if user exists AND if the password matches
-      if (user && (await user.matchPassword(password))) {
-        // 3. If everything is correct, send back user info and a token
-        res.json({
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          // For students, include their status
-          ...(user.role === 'student' && { status: user.status }),
-          token: generateToken(user._id),
-        });
-      } else {
-        // 401 means Unauthorized
-        res.status(401).json({ message: 'Invalid email or password' });
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error: ' + error.message });
+  const { email, password } = req.body;
+
+  try {
+    // 1. Find the user by email
+    const user = await User.findOne({ email });
+
+    // 2. Check if user exists AND if the password matches
+    if (user && (await user.matchPassword(password))) {
+      // 3. If everything is correct, send back user info and a token
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        // For students, include their status
+        ...(user.role === 'student' && { status: user.status }),
+        token: generateToken(user._id),
+      });
+    } else {
+      // 401 means Unauthorized
+      res.status(401).json({ message: 'Invalid email or password' });
     }
-  };
-  
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error: ' + error.message });
+  }
+};
+
 //login teacher
 // const loginTeacher = async (req, res) => {
 //   const { email, password } = req.body;
@@ -105,24 +106,24 @@ const loginUser = async (req, res) => {
 const loginTeacher = async (req, res) => {
   const { email, password } = req.body;
   try {
-      // 1. Find the user by email in the main User collection
-      const user = await User.findOne({ email });
+    // 1. Find the user by email in the main User collection
+    const user = await User.findOne({ email });
 
-      // 2. Check if user exists, if the password matches, AND if their role is 'teacher'
-      if (user && user.role === 'teacher' && (await user.matchPassword(password))) {
-          res.json({
-              _id: user._id,
-              name: user.name,
-              email: user.email,
-              role: user.role,
-              token: generateToken(user._id),
-          });
-      } else {
-          // 3. If any of the checks fail, send an "Unauthorized" error
-          res.status(401).json({ message: 'Invalid email or password' });
-      }
+    // 2. Check if user exists, if the password matches, AND if their role is 'teacher'
+    if (user && user.role === 'teacher' && (await user.matchPassword(password))) {
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token: generateToken(user._id),
+      });
+    } else {
+      // 3. If any of the checks fail, send an "Unauthorized" error
+      res.status(401).json({ message: 'Invalid email or password' });
+    }
   } catch (error) {
-      res.status(500).json({ message: 'Server Error: ' + error.message });
+    res.status(500).json({ message: 'Server Error: ' + error.message });
   }
 };
 
@@ -142,31 +143,62 @@ const getStudents = async (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = async (req, res) => {
-    // The 'protect' middleware already fetched the user and attached it to the request
-    const user = req.user;
-  
-    if (user) {
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        ...(user.role === 'student' && { prn: user.prn, status: user.status }),
-      });
-    } else {
-      res.status(404).json({ message: 'User not found' });
+  // The 'protect' middleware already fetched the user and attached it to the request
+  const user = req.user;
+
+  if (user) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      profilePhoto: user.profilePhoto || null,
+      ...(user.role === 'student' && { prn: user.prn, status: user.status }),
+    });
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+};
+
+// @desc    Upload or update profile photo (base64)
+// @route   PUT /api/users/profile/photo
+// @access  Private
+const uploadProfilePhoto = async (req, res) => {
+  try {
+    const { photoData } = req.body; // base64 data URL string
+    if (!photoData) {
+      return res.status(400).json({ message: 'No photo data provided' });
     }
-  };
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.profilePhoto = photoData;
+    await user.save();
+
+    await logAction({
+      action: 'Updated Profile Photo',
+      actorId: user._id,
+      actorName: user.name,
+    });
+
+    res.json({ message: 'Profile photo updated successfully', profilePhoto: user.profilePhoto });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error: ' + error.message });
+  }
+};
 
 
-  // @desc    Update a student's status (approve/reject)
+// @desc    Update a student's status (approve/reject)
 // @route   PUT /api/users/:id/status
 // @access  Private/Teacher
 const updateStudentStatus = async (req, res) => {
   try {
     // The new status will be in the request body, e.g., { "status": "approved" }
     const { status } = req.body;
-    
+
     // Find the student by the ID in the URL parameter
     const student = await User.findById(req.params.id);
 
@@ -181,7 +213,7 @@ const updateStudentStatus = async (req, res) => {
     res.status(500).json({ message: 'Server Error: ' + error.message });
   }
 };
-  
+
 
 
 // @desc    Submit answers for an exam
@@ -247,7 +279,7 @@ const deleteStudent = async (req, res) => {
     res.status(500).json({ message: 'Server Error: ' + error.message });
   }
 };
- 
+
 // @desc    Register a new teacher
 // @route   POST /api/users/add-teacher
 // @access  Private/Teacher
@@ -256,37 +288,37 @@ const addTeacher = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-      // 2. Check if a user with this email already exists
-      const userExists = await User.findOne({ email });
+    // 2. Check if a user with this email already exists
+    const userExists = await User.findOne({ email });
 
-      if (userExists) {
-          return res.status(400).json({ message: 'A user with this email already exists' });
-      }
+    if (userExists) {
+      return res.status(400).json({ message: 'A user with this email already exists' });
+    }
 
-      // 3. Create a new user with the role of 'teacher'
-      const user = await User.create({
-          name,
-          email,
-          password,
-          role: 'teacher',
-          status: 'approved', // Teachers are approved by default
+    // 3. Create a new user with the role of 'teacher'
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role: 'teacher',
+      status: 'approved', // Teachers are approved by default
+    });
+
+    // 4. If the teacher was created successfully, send back their details
+    if (user) {
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
       });
-
-      // 4. If the teacher was created successfully, send back their details
-      if (user) {
-          res.status(201).json({
-              _id: user._id,
-              name: user.name,
-              email: user.email,
-              role: user.role,
-          });
-      } else {
-          res.status(400).json({ message: 'Invalid teacher data' });
-      }
+    } else {
+      res.status(400).json({ message: 'Invalid teacher data' });
+    }
   } catch (error) {
-      res.status(500).json({ message: 'Server Error: ' + error.message });
+    res.status(500).json({ message: 'Server Error: ' + error.message });
   }
 };
 
 
-module.exports = { registerUser, loginUser, getUserProfile, getStudents, updateStudentStatus, loginTeacher, deleteStudent, addTeacher };
+module.exports = { registerUser, loginUser, getUserProfile, getStudents, updateStudentStatus, loginTeacher, deleteStudent, addTeacher, uploadProfilePhoto };

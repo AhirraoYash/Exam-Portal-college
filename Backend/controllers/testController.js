@@ -4,6 +4,7 @@ const Test = require('../models/Test.js');
 const Submission = require('../models/Submission.js');
 const User = require('../models/User.js');
 const exceljs = require('exceljs');
+const logAction = require('../utils/auditLogger.js');
 
 // @desc    Create a new test
 // @route   POST /api/tests
@@ -26,6 +27,17 @@ const createTest = async (req, res) => {
 
     // Save the new test to the database
     const createdTest = await test.save();
+
+    // Log the action
+    await logAction({
+      action: 'Created Test',
+      actorId: req.user._id,
+      actorName: req.user.name,
+      targetId: createdTest._id,
+      targetName: name,
+      meta: { totalMarks, questionsCount: questions?.length || 0 },
+    });
+
     res.status(201).json(createdTest); // 201 means "Created"
 
   } catch (error) {
@@ -73,7 +85,20 @@ const getTestById = async (req, res) => {
 //delete test by id 
 const deleteTestById = async (req, res) => {
   try {
-    const test = await Test.findByIdAndDelete(req.params.id);
+    const test = await Test.findById(req.params.id);
+    const testName = test ? test.name : 'Unknown Test';
+
+    await Test.findByIdAndDelete(req.params.id);
+
+    // Log the action
+    await logAction({
+      action: 'Deleted Test',
+      actorId: req.user._id,
+      actorName: req.user.name,
+      targetId: req.params.id,
+      targetName: testName,
+    });
+
     res.json({ message: 'Test deleted successfully' });
   } catch (error) {
     console.error(error);

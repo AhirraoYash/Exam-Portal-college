@@ -18,7 +18,7 @@ const StudentLayout = () => {
                 <Header studentName={user?.name || 'Student'} />
 
                 {/* Page content rendered here — changes on navigation */}
-                <main className="flex-1 mt-20 p-4 md:p-8 overflow-y-auto w-full">
+                <main className="flex-1 mt-16 p-4 md:p-8 overflow-y-auto w-full">
                     <Outlet />
                 </main>
             </div>

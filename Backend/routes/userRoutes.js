@@ -1,20 +1,22 @@
-// In backend/routes/userRoutes.js
-
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, getUserProfile, getStudents, updateStudentStatus, loginTeacher, deleteStudent, addTeacher } = require('../controllers/userController.js');
+const { registerUser, loginUser, getUserProfile, getStudents, updateStudentStatus, loginTeacher, deleteStudent, addTeacher, uploadProfilePhoto } = require('../controllers/userController.js');
 const { protect, teacher } = require('../middleware/authMiddleware.js');
 
-// When a POST request is made to '/signup', call the registerUser controller function
 router.post('/signup', registerUser);
 router.post('/login', loginUser);
-// This route will first run 'protect', then 'getUserProfile'
-router.get('/profile', protect, getUserProfile);
-router.get('/getStudents', protect,teacher,getStudents);  
-router.put('/:id/status', protect,teacher,updateStudentStatus);
-// router.post('/submit-exam', protect,submitExam);
 router.post('/login-teacher', loginTeacher);
-router.delete('/delete-student/:id',protect,teacher,deleteStudent);
 router.post('/add-teacher', protect, addTeacher);
+
+// Profile routes — must be BEFORE /:id/* wildcard routes
+router.get('/profile', protect, getUserProfile);
+router.put('/profile/photo', protect, uploadProfilePhoto);
+
+// Student management
+router.get('/getStudents', protect, teacher, getStudents);
+router.delete('/delete-student/:id', protect, teacher, deleteStudent);
+
+// Parameterized routes — always LAST to avoid catching static paths above
+router.put('/:id/status', protect, teacher, updateStudentStatus);
 
 module.exports = router;

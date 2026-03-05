@@ -25,6 +25,7 @@ import AllStudentsPage from "./pages/Admin/AllStudentsPage";
 import TestDetail from "./pages/Admin/TestDetail";
 import TestResultsPage from "./pages/Admin/TestResultsPage";
 import AddTeacherPage from "./pages/Admin/AddTeacherPage";
+import AllTeachersPage from "./pages/Admin/AllTeachersPage";
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
             <Route path="tests/:testId" element={<TestDetail />} />
             <Route path="test-results/:testId" element={<TestResultsPage />} />
             <Route path="add-teacher" element={<AddTeacherPage />} />
+            <Route path="all-teachers" element={<AllTeachersPage />} />
           </Route>
         </Routes>
       </SidebarProvider>
